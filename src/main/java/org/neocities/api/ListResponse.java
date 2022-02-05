@@ -10,7 +10,7 @@ public class ListResponse extends BaseResponse {
     public static class FilesNode {
         private String path;
         private boolean is_directory;
-        private int size;
+        private long size;
         private Date updated_at;
         private String sha1_hash;
 
@@ -22,7 +22,7 @@ public class ListResponse extends BaseResponse {
             return is_directory;
         }
 
-        public int getSize() {
+        public long getSize() {
             return size;
         }
 

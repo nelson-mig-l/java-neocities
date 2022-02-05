@@ -10,8 +10,13 @@ public class Example {
 
         final NeoCitiesApi api = getApi(args);
 
-        final InfoResponse response = api.info();
-        System.out.println(response.getInfo().getHits());
+        final InfoResponse myInfo = api.info();
+        System.out.println(myInfo.getInfo().getSiteName());
+        System.out.println(myInfo.getInfo().getHits());
+
+        final InfoResponse otherInfo = api.info("edz");
+        System.out.println(otherInfo.getInfo().getSiteName());
+        System.out.println(otherInfo.getInfo().getHits());
 
         final KeyResponse key = api.key();
         System.out.println(key.getApiKey());

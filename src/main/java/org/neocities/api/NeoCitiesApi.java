@@ -12,5 +12,7 @@ public interface NeoCitiesApi {
 
     InfoResponse info();
 
+    InfoResponse info(String siteName);
+
     KeyResponse key();
 }

@@ -7,8 +7,8 @@ public class InfoResponse extends BaseResponse {
 
     public static class InfoNode {
         private String sitename;
-        private int views;
-        private int hits;
+        private long views;
+        private long hits;
         private Date created_at;
         private Date last_update;
         private String domain;
@@ -18,11 +18,11 @@ public class InfoResponse extends BaseResponse {
             return sitename;
         }
 
-        public int getViews() {
+        public long getViews() {
             return views;
         }
 
-        public int getHits() {
+        public long getHits() {
             return hits;
         }
 

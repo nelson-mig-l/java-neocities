@@ -6,44 +6,60 @@ import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class NeoCitiesApiImpl implements NeoCitiesApi {
 
     public static final String DEFAULT_ADDRESS = "https://neocities.org/api";
+    public static final String RFC2822 = "EEE, dd MMM yyyy HH:mm:ss Z";
+
+    private static final HttpUrl DEFAULT_URL = HttpUrl.parse(DEFAULT_ADDRESS);
 
     private final OkHttpClient client = new OkHttpClient();
     private final Gson gson = new GsonBuilder()
-            .setDateFormat("EEE, dd MMM yyyy HH:mm:ss Z")
+            .setDateFormat(RFC2822)
             .create();
 
     private final String credential;
 
-    public NeoCitiesApiImpl(String user, String password) {
+    public NeoCitiesApiImpl(final String user, final String password) {
         this.credential = Credentials.basic(user, password);
     }
 
-    public NeoCitiesApiImpl(String apiKey) {
+    public NeoCitiesApiImpl(final String apiKey) {
         this.credential = "Bearer " + apiKey;
     }
 
     @Override
     public BaseResponse upload(final File file) {
+        final HttpUrl url = urlForPath("upload")
+                .build();
         final RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart(file.getName(), file.getName(), RequestBody.create(file, MediaType.parse("text/plain")))
+                .addFormDataPart(file.getName(), file.getName(), requestBodyFromFile(file))
                 .build();
-        final Request request = newBuilder("upload")
+        final Request request = authorizedRequest(url)
                 .post(requestBody)
                 .build();
         return ask(request, BaseResponse.class);
     }
 
+    private RequestBody requestBodyFromFile(final File file) {
+        try {
+            return RequestBody.create(Files.readAllBytes(file.toPath()));
+        } catch (IOException e) {
+            throw new NeoCitiesApiError(e);
+        }
+    }
+
     @Override
     public BaseResponse delete(final String filename) {
+        final HttpUrl url = urlForPath("delete")
+                .build();
         final RequestBody requestBody = new MultipartBody.Builder()
                 .addFormDataPart("filenames[]", filename)
                 .build();
-        final Request request = newBuilder("delete")
+        final Request request = authorizedRequest(url)
                 .post(requestBody)
                 .build();
         return ask(request, BaseResponse.class);
@@ -51,32 +67,53 @@ public class NeoCitiesApiImpl implements NeoCitiesApi {
 
     @Override
     public ListResponse list() {
-        final Request request = newBuilder("list").build();
+        final HttpUrl url = urlForPath("list")
+                .build();
+        final Request request = authorizedRequest(url)
+                .build();
         return ask(request, ListResponse.class);
     }
 
     @Override
     public InfoResponse info() {
-        final Request request = newBuilder("info")
-                //.addHeader("siteName", siteName)
+        final HttpUrl url = urlForPath("info")
+                .build();
+        final Request request = authorizedRequest(url)
+                .build();
+        return ask(request, InfoResponse.class);
+    }
+
+    @Override
+    public InfoResponse info(final String siteName) {
+        final HttpUrl url = urlForPath("info")
+                .addQueryParameter("sitename", siteName)
+                .build();
+        final Request request = authorizedRequest(url)
                 .build();
         return ask(request, InfoResponse.class);
     }
 
     @Override
     public KeyResponse key() {
-        final Request request = newBuilder("key").build();
+        final HttpUrl url = urlForPath("key")
+                .build();
+        final Request request = authorizedRequest(url)
+                .build();
         return ask(request, KeyResponse.class);
     }
 
-    private Request.Builder newBuilder(final String path) {
+    private HttpUrl.Builder urlForPath(final String path) {
+        return DEFAULT_URL.newBuilder().addPathSegment(path);
+    }
+
+    private Request.Builder authorizedRequest(final HttpUrl url) {
         return new Request.Builder()
-                .url(DEFAULT_ADDRESS + '/' + path)
-                .addHeader("Authorization", credential);
+                .addHeader("Authorization", credential)
+                .url(url);
     }
 
     private <T extends BaseResponse> T ask(final Request request, final Class<T> classOf) {
-        try (Response response = client.newCall(request).execute()) {
+        try (final Response response = client.newCall(request).execute()) {
             final T instance = gson.fromJson(response.body().string(), classOf);
             check(instance);
             return instance;
@@ -86,7 +123,7 @@ public class NeoCitiesApiImpl implements NeoCitiesApi {
     }
 
     private void check(final BaseResponse instance) {
-        if (!instance.getResult().equals("success")) {
+        if (!BaseResponse.SUCCESS.equals(instance.getResult())) {
             throw NeoCitiesApiError.fromResponse(instance);
         }
     }

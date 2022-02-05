@@ -2,6 +2,8 @@ package org.neocities.api;
 
 public class BaseResponse {
 
+    public static final String SUCCESS = "success";
+
     private String result;
     private String error_type;
     private String message;

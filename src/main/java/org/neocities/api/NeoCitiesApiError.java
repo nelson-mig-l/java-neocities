@@ -7,7 +7,7 @@ public class NeoCitiesApiError extends RuntimeException {
                 .append(instance.getResult())
                 .append("' (ErrorType=")
                 .append(instance.getErrorType())
-                .append(", message")
+                .append(", message=")
                 .append(instance.getMessage())
                 .append(").")
                 .toString();
