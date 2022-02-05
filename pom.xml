@@ -26,4 +26,17 @@
         </dependency>
     </dependencies>
 
+    <scm>
+        <developerConnection>scm:git:https://github.com/nelson-mig-l/java-neocities.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub nelson-mig-l Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/nelson-mig-l/java-neocities</url>
+        </repository>
+    </distributionManagement>
+
 </project>
