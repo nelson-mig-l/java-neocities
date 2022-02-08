@@ -6,6 +6,8 @@ public interface NeoCitiesApi {
 
     BaseResponse upload(File file);
 
+    BaseResponse upload(File file, String targetName);
+
     BaseResponse delete(String filename);
 
     ListResponse list();

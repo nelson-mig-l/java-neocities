@@ -32,11 +32,16 @@ public class NeoCitiesApiImpl implements NeoCitiesApi {
 
     @Override
     public BaseResponse upload(final File file) {
+        return upload(file, file.getName());
+    }
+
+    @Override
+    public BaseResponse upload(final File file, final String targetName) {
         final HttpUrl url = urlForPath("upload")
                 .build();
         final RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart(file.getName(), file.getName(), requestBodyFromFile(file))
+                .addFormDataPart(targetName, file.getName(), requestBodyFromFile(file))
                 .build();
         final Request request = authorizedRequest(url)
                 .post(requestBody)
