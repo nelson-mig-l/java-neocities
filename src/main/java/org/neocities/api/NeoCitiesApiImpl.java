@@ -7,6 +7,8 @@ import okhttp3.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 
 public class NeoCitiesApiImpl implements NeoCitiesApi {
 
@@ -37,11 +39,22 @@ public class NeoCitiesApiImpl implements NeoCitiesApi {
 
     @Override
     public BaseResponse upload(final File file, final String targetName) {
+        return upload(new FileToUpload(file.getPath(), targetName));
+    }
+
+    @Override
+    public BaseResponse upload(final FileToUpload... filesToUpload) {
         final HttpUrl url = urlForPath("upload")
                 .build();
-        final RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart(targetName, file.getName(), requestBodyFromFile(file))
+        final MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        Arrays.stream(filesToUpload).forEach(fileToUpload -> {
+            final String sourcePath = fileToUpload.getSourcePath();
+            final String targetPath = fileToUpload.getTargetPath();
+            final RequestBody body = requestBodyFromFile(sourcePath);
+            builder.addFormDataPart(targetPath, Path.of(sourcePath).getFileName().toString(), body);
+        });
+        final RequestBody requestBody = builder
                 .build();
         final Request request = authorizedRequest(url)
                 .post(requestBody)
@@ -49,21 +62,21 @@ public class NeoCitiesApiImpl implements NeoCitiesApi {
         return ask(request, BaseResponse.class);
     }
 
-    private RequestBody requestBodyFromFile(final File file) {
+    private RequestBody requestBodyFromFile(final String path) {
         try {
-            return RequestBody.create(Files.readAllBytes(file.toPath()));
+            return RequestBody.create(Files.readAllBytes(Path.of(path)));
         } catch (IOException e) {
             throw new NeoCitiesApiError(e);
         }
     }
 
     @Override
-    public BaseResponse delete(final String filename) {
+    public BaseResponse delete(final String... fileNames) {
         final HttpUrl url = urlForPath("delete")
                 .build();
-        final RequestBody requestBody = new MultipartBody.Builder()
-                .addFormDataPart("filenames[]", filename)
-                .build();
+        final MultipartBody.Builder builder = new MultipartBody.Builder();
+        Arrays.stream(fileNames).forEach(fileName -> builder.addFormDataPart("filenames[]", fileName));
+        final RequestBody requestBody = builder.build();
         final Request request = authorizedRequest(url)
                 .post(requestBody)
                 .build();

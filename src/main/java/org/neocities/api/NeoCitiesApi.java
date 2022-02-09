@@ -4,11 +4,15 @@ import java.io.File;
 
 public interface NeoCitiesApi {
 
+    @Deprecated
     BaseResponse upload(File file);
 
+    @Deprecated
     BaseResponse upload(File file, String targetName);
 
-    BaseResponse delete(String filename);
+    BaseResponse upload(FileToUpload... filesToUpload);
+
+    BaseResponse delete(String... fileNames);
 
     ListResponse list();
 
