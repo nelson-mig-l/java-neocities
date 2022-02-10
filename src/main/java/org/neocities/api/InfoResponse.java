@@ -5,6 +5,8 @@ import java.util.List;
 
 public class InfoResponse extends BaseResponse {
 
+    private InfoNode info;
+
     public static class InfoNode {
         private String sitename;
         private long views;
@@ -42,8 +44,6 @@ public class InfoResponse extends BaseResponse {
             return tags;
         }
     }
-
-    private InfoNode info;
 
     public InfoNode getInfo() {
         return info;

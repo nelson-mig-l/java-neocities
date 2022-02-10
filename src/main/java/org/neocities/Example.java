@@ -1,31 +1,56 @@
 package org.neocities;
 
 import org.neocities.api.*;
-
-import java.io.File;
+import org.neocities.utils.FileToUploadHelper;
 
 public class Example {
 
-    public static void main(String[] args) {
+    /**
+     * Example usage.
+     * @param args should be your username and password or API key.
+     */
+    public static void main(final String[] args) {
 
         final NeoCitiesApi api = getApi(args);
 
         final InfoResponse myInfo = api.info();
-        System.out.println(myInfo.getInfo().getSiteName());
-        System.out.println(myInfo.getInfo().getHits());
+        title("Showing hits for your site");
+        print(myInfo.getInfo().getSiteName());
+        print(myInfo.getInfo().getHits());
 
         final InfoResponse otherInfo = api.info("edz");
-        System.out.println(otherInfo.getInfo().getSiteName());
-        System.out.println(otherInfo.getInfo().getHits());
+        title("Showing hits for other site");
+        print(otherInfo.getInfo().getSiteName());
+        print(otherInfo.getInfo().getHits());
 
         final KeyResponse key = api.key();
-        System.out.println(key.getApiKey());
+        title("Your API key is:");
+        print(key.getApiKey());
 
-        final ListResponse list = api.list();
-        list.getFiles().forEach(f -> System.out.println(f.getPath()));
+        title("Listing files");
+        api.list().getFiles().forEach(f -> print(f.getPath()));
 
-        //api.delete("about.html");
-        //api.upload(new File("index.html"));
+        api.upload(
+                FileToUploadHelper.uploadFileToSpecificPath("sample.html", "test/hello.html"),
+                FileToUploadHelper.uploadFileToDirectory("hello.txt", "test"),
+                FileToUploadHelper.uploadFileToRoot("test.html")
+        );
+
+        title("Listing files after upload");
+        api.list().getFiles().forEach(f -> print(f.getPath()));
+
+        api.delete("test/hello.html", "test/hello.txt", "test", "test.html");
+
+        title("Listing files after delete");
+        api.list().getFiles().forEach(f -> print(f.getPath()));
+    }
+
+    private static void title(final Object obj) {
+        print("=== " + obj + " ===");
+    }
+
+    private static void print(final Object obj) {
+        System.out.println(obj.toString());
     }
 
     private static NeoCitiesApi getApi(final String[] args) {

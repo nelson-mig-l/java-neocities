@@ -33,11 +33,6 @@ public class NeoCitiesApiImpl implements NeoCitiesApi {
     }
 
     @Override
-    public BaseResponse upload(final File file) {
-        return upload(file, file.getName());
-    }
-
-    @Override
     public BaseResponse upload(final File file, final String targetName) {
         return upload(new FileToUpload(file.getPath(), targetName));
     }

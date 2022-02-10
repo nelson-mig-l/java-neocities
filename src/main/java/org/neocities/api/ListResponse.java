@@ -5,9 +5,9 @@ import java.util.List;
 
 public class ListResponse extends BaseResponse {
 
-    private List<FilesNode> files;
+    private List<FileNode> files;
 
-    public static class FilesNode {
+    public static class FileNode {
         private String path;
         private boolean is_directory;
         private long size;
@@ -35,7 +35,7 @@ public class ListResponse extends BaseResponse {
         }
     }
 
-    public List<FilesNode> getFiles() {
+    public List<FileNode> getFiles() {
         return files;
     }
 }

@@ -4,10 +4,6 @@ import java.io.File;
 
 public interface NeoCitiesApi {
 
-    @Deprecated
-    BaseResponse upload(File file);
-
-    @Deprecated
     BaseResponse upload(File file, String targetName);
 
     BaseResponse upload(FileToUpload... filesToUpload);
