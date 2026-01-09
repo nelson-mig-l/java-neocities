@@ -14,21 +14,35 @@ public class Example {
         final NeoCitiesApi api = getApi(args);
 
         final InfoResponse myInfo = api.info();
-        title("Showing hits for your site");
+
+
+        title("Showing hits and views for your site");
         print(myInfo.getInfo().getSiteName());
         print(myInfo.getInfo().getHits());
+        title("Showing creation and last update dates for your site");
+        print(myInfo.getInfo().getCreatedAt());
+        print(myInfo.getInfo().getLastUpdate());
 
         final InfoResponse otherInfo = api.info("edz");
         title("Showing hits for other site");
         print(otherInfo.getInfo().getSiteName());
         print(otherInfo.getInfo().getHits());
+        title("Showing creation and last update dates for other site");
+        print(otherInfo.getInfo().getCreatedAt());
+        print(otherInfo.getInfo().getLastUpdate());
 
         final KeyResponse key = api.key();
         title("Your API key is:");
         print(key.getApiKey());
 
         title("Listing files");
-        api.list().getFiles().forEach(f -> print(f.getPath()));
+        api.list().getFiles().forEach(f -> {
+            print(f.getPath());
+            print("\tdirectory:  " + f.isDirectory());
+            print("\tsize:       " + f.getSize());
+            print("\tsha1:       " + f.getSha1Hash());
+            print("\tupdated at: " + f.getUpdatedAt());
+        });
 
         api.upload(
                 FileToUploadHelper.uploadFileToSpecificPath("sample.html", "test/hello.html"),
