@@ -3,6 +3,7 @@ package org.neocities.api;
 public class BaseResponse {
 
     public static final String SUCCESS = "success";
+    public static final String ERROR = "error";
 
     private String result;
     private String error_type;
