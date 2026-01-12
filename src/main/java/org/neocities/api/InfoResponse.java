@@ -12,7 +12,7 @@ public class InfoResponse extends BaseResponse {
         private long views;
         private long hits;
         private Date created_at;
-        private Date last_update;
+        private Date last_updated;
         private String domain;
         private List<String> tags;
 
@@ -33,7 +33,7 @@ public class InfoResponse extends BaseResponse {
         }
 
         public Date getLastUpdate() {
-            return last_update;
+            return last_updated;
         }
 
         public String getDomain() {
