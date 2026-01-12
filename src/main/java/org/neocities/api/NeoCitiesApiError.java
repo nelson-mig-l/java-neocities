@@ -2,23 +2,35 @@ package org.neocities.api;
 
 public class NeoCitiesApiError extends RuntimeException {
 
+    private final String errorType;
+    private final String errorMessage;
+
     public static NeoCitiesApiError fromResponse(final BaseResponse instance) {
-        final String message = new StringBuilder("API returned unexpected result: '")
-                .append(instance.getResult())
-                .append("' (ErrorType=")
-                .append(instance.getErrorType())
+        return new NeoCitiesApiError(instance.getErrorType(), instance.getMessage());
+    }
+
+    private static String createMessage(final String errorType, final String errorMessage) {
+        return new StringBuilder("API returned an error: ")
+                .append("(ErrorType=")
+                .append(errorType)
                 .append(", message=")
-                .append(instance.getMessage())
+                .append(errorMessage)
                 .append(").")
                 .toString();
-        return new NeoCitiesApiError(message);
     }
 
-    public NeoCitiesApiError(final String message) {
-        super(message);
+    private NeoCitiesApiError(final String errorType, final String errorMessage) {
+        super(createMessage(errorType, errorMessage));
+        this.errorType = errorType;
+        this.errorMessage = errorMessage;
     }
 
-    public NeoCitiesApiError(final Throwable cause) {
-        super(cause);
+    public String getErrorType() {
+        return errorType;
     }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
 }
