@@ -1,12 +1,14 @@
 package org.neocities.api;
 
+import java.util.Optional;
+
 public class NeoCitiesApiError extends RuntimeException {
 
     /**
      * The actual error response from the neocities API.
      * Will be null if this exception was not built from a response.
      */
-    private final BaseResponse error;
+    public final BaseResponse error;
 
     public static NeoCitiesApiError fromResponse(final BaseResponse instance) {
         final String message = new StringBuilder("API returned unexpected result: '")
@@ -35,10 +37,10 @@ public class NeoCitiesApiError extends RuntimeException {
     }
 
     /**
-     * Provides access to the error response from Neocities (if present)
-     * @return BaseResponse if this represents a response from neocities, null otherwise.
+     * Safely provides access to the error response from Neocities (if present)
+     * @return the value of {@link NeoCitiesApiError#error} wrapped in an {@link Optional}
      */
-    public BaseResponse getError() {
-        return error;
+    public Optional<BaseResponse> getError() {
+        return Optional.ofNullable(error);
     }
 }
