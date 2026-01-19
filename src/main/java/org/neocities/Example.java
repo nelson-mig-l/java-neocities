@@ -31,6 +31,14 @@ public class Example {
         print(otherInfo.getInfo().getCreatedAt());
         print(otherInfo.getInfo().getLastUpdate());
 
+        try {
+            api.info("non-existing-site");
+        } catch (NeoCitiesApiError error) {
+            title("Showing details about api error");
+            print(error.getErrorType());
+            print(error.getErrorMessage());
+        }
+
         final KeyResponse key = api.key();
         title("Your API key is:");
         print(key.getApiKey());

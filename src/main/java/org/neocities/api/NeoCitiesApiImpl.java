@@ -61,7 +61,7 @@ public class NeoCitiesApiImpl implements NeoCitiesApi {
         try {
             return RequestBody.create(Files.readAllBytes(Path.of(path)));
         } catch (IOException e) {
-            throw new NeoCitiesApiError(e);
+            throw new NeoCitiesApiException(e);
         }
     }
 
@@ -131,7 +131,7 @@ public class NeoCitiesApiImpl implements NeoCitiesApi {
             check(instance);
             return instance;
         } catch (IOException e) {
-            throw new NeoCitiesApiError(e);
+            throw new NeoCitiesApiException(e);
         }
     }
 
